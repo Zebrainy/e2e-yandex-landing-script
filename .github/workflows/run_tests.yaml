@@ -25,7 +25,7 @@ on:
 jobs:
     test:
         name: test
-        runs-on: self-hosted
+        runs-on: ubuntu-latest
         defaults:
             run:
                 shell: bash
@@ -59,6 +59,7 @@ jobs:
               id: convert-config
               run: |
                   echo "TEST_CONFIG=$(cat ${{ inputs.TEST_CONFIG_FILENAME }} | tr -d '\n')" >> $GITHUB_OUTPUT
+                  ls -R --ignore='*node_modules*'
 
             # - name: Get yarn cache directory path
             #   working-directory: ./testing
@@ -84,6 +85,8 @@ jobs:
               run: |
                   yarn start -- $GITHUB_WORKSPACE/${{ inputs.TEST_CONFIG_FILENAME }} '${{ inputs.YANDEX_AUTH_TOKEN }}'
 
+            - name: log
+              run: ls -R --ignore='*node_modules*'
             - name: Copy updated snapshots back
               #   if: ${{ env.IS_FIRST_RUN == 'true' || steps.run_test.outcome == 'failure'}}
               run: |
