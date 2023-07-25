@@ -25,7 +25,7 @@ on:
 jobs:
     test:
         name: test
-        runs-on: ubuntu-latest
+        runs-on: self-hosted
         defaults:
             run:
                 shell: bash
@@ -38,6 +38,14 @@ jobs:
               with:
                   repository: Zebrainy/e2e-yandex-landing-script
                   path: ./testing
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v1
+              with:
+                  node-version: "16.x"
+
+            - name: Install yarn
+              run: npm install -g yarn
 
             - name: Check for first run
               run: echo "IS_FIRST_RUN=$([ -d "app_snapshots" ] && echo "false" || echo "true" )" >> $GITHUB_ENV
