@@ -149,7 +149,7 @@ jobs:
                   CHANNELS: ${{ inputs.SLACK_CHANNEL }}
 
             - name: Send report in slack if something went wrong
-              if: ${{  !cancelled() && steps.run_test.outcome == 'failure' && steps.pull-request.outputs.pull-request-url != ''}}
+              if: ${{  !cancelled() && steps.run_test.outcome == 'failure' && steps.pull-request.outputs.pull-request-url == ''}}
               uses: Zebrainy/slack-send@v1
               id: send-message-fail-very-bad
               with:
