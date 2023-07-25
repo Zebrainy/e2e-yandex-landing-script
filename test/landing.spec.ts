@@ -1,22 +1,23 @@
 import { Page } from "playwright"
 import { toMatchImageSnapshot } from "jest-image-snapshot"
+import fs from "fs"
+import { getHash } from "../src/hash"
 
 expect.extend({ toMatchImageSnapshot })
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-const takeScreenshot = async (dir: string) => {
+const takeScreenshot = async (dir: string, dirName: string) => {
 	const filename = "screen"
-	const snapFolder = process.env.LANDING_URL_HASH
 	expect(
 		await page.screenshot({
 			fullPage: false,
-			path: `./app_snapshots/${snapFolder}/received/${dir}/${filename}-snap.png`,
+			path: `./app_snapshots/${dirName}/received/${dir}/${filename}-snap.png`,
 		})
 	).toMatchImageSnapshot({
 		customSnapshotIdentifier: filename,
-		customSnapshotsDir: `./app_snapshots/${snapFolder}/base/` + dir,
-		customDiffDir: `./app_snapshots/${snapFolder}/diff/` + dir,
+		customSnapshotsDir: `./app_snapshots/${dirName}/base/` + dir,
+		customDiffDir: `./app_snapshots/${dirName}/diff/` + dir,
 		failureThreshold: 0.005,
 		failureThresholdType: "percent",
 	})
@@ -30,12 +31,18 @@ const openPage = async (page: Page, url: string) => {
 		timeout: 60000,
 	})
 }
+type TestCfg = { url: string; delay: string }[]
 
 describe("Test", () => {
-	it("First page", async () => {
-		await openPage(page, `${process.env.LANDING_URL}`)
-		await page.waitForLoadState("domcontentloaded")
-		await sleep(parseInt(process.env.DELAY_BEFORE_SCREENSHOT_MS || "2000"))
-		await takeScreenshot(`${deviceName}`)
-	})
+	const cfg = fs.readFileSync(process.env.CONFIG_PATH, "utf8")
+	const testCfg = JSON.parse(cfg) as TestCfg
+
+	for (let test of testCfg) {
+		it("First page", async () => {
+			await openPage(page, test.url)
+			await page.waitForLoadState("domcontentloaded")
+			await sleep(parseInt(test.delay || "2000"))
+			await takeScreenshot(`${deviceName}`, getHash(test.url))
+		})
+	}
 })
