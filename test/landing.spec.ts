@@ -38,6 +38,7 @@ describe("Test", () => {
 	const testCfg = JSON.parse(cfg) as TestCfg
 
 	for (let test of testCfg) {
+		console.log("CONFIG:", test)
 		it("First page", async () => {
 			await openPage(page, test.url)
 			await page.waitForLoadState("domcontentloaded")
