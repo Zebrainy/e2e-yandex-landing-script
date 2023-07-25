@@ -129,7 +129,7 @@ jobs:
               id: send-message-first-run
               with:
                   MESSAGE_TEXT: |
-                      :white_check_mark: Первый запуск тестов прошёл успешно. Скриншоты сгенерированы и отправлены ${{ format('<{0}|пулл реквестом>', steps.pull-request.outputs.pull-request-url) }}
+                      :white_check_mark: Первый запуск тестов прошёл успешно. Скриншоты сгенерированы и отправлены <${{steps.pull-request.outputs.pull-request-url}}|пулл реквестом>
                   SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
                   CHANNELS: ${{ inputs.SLACK_CHANNEL }}
 
@@ -141,7 +141,7 @@ jobs:
                   MESSAGE_TEXT: |
                       :smiling_face_with_tear: Упс, тест упал, но мы уже создали <${{steps.pull-request.outputs.pull-request-url}}|пулл реквест> с новыми скриншотами, проверьте его и, если все ок, то смержите.
                       (<https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}|action>)
-                      Посмотреть отчёт можно в комментариях к этому посту, или по <${{steps.pull-request.outputs.pull-request-url }}/files|ccskrt>
+                      Посмотреть отчёт можно в комментариях к этому посту :point_down: или по <${{steps.pull-request.outputs.pull-request-url }}/files|ссылке>
 
                   SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
                   FILENAME: ./app_snapshots/screenshot-diffs.zip
