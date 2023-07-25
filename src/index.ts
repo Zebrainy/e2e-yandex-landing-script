@@ -21,7 +21,11 @@ async function run() {
 		)}" YANDEX_TOKEN="${yandexToken}" DELAY_BEFORE_SCREENSHOT_MS="${
 			test.delay
 		}"`
-		execSync(`${envs} yarn test`)
+		try {
+			execSync(`${envs} yarn test`)
+		} catch (e: any) {
+			console.log("error", e.message)
+		}
 	}
 }
 

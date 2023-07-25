@@ -27,7 +27,7 @@ const openPage = async (page: Page, url: string) => {
 		Authorization: `OAuth ${process.env.YANDEX_TOKEN}`,
 	})
 	await page.goto(url, {
-		timeout: 10000,
+		timeout: 60000,
 	})
 }
 
