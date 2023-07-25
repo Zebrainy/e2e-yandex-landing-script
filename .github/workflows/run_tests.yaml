@@ -139,8 +139,9 @@ jobs:
               id: send-message-fail
               with:
                   MESSAGE_TEXT: |
-                      :smiling_face_with_tear: Упс, тест упал, но мы уже создали ${{ format('<{0}|пулл реквест>', steps.pull-request.outputs.pull-request-url) }} с новыми скриншотами, проверьте его и, если все ок, то смержите.
+                      :smiling_face_with_tear: Упс, тест упал, но мы уже создали <${{steps.pull-request.outputs.pull-request-url}}|пулл реквест> с новыми скриншотами, проверьте его и, если все ок, то смержите.
                       (<https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}|action>)
+                      Посмотреть отчёт можно в комментариях к этому посту, или по <${{steps.pull-request.outputs.pull-request-url }}/files|ccskrt>
 
                   SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
                   FILENAME: ./app_snapshots/screenshot-diffs.zip
