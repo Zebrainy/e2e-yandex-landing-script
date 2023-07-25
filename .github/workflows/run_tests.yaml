@@ -129,6 +129,7 @@ jobs:
               id: send-message-first-run
               with:
                   MESSAGE_TEXT: |
+                      *Я.Лендинг*
                       :white_check_mark: Первый запуск тестов прошёл успешно. Скриншоты отправлены <${{steps.pull-request.outputs.pull-request-url}}|пулл реквестом>
                   SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
                   CHANNELS: ${{ inputs.SLACK_CHANNEL }}
@@ -139,10 +140,11 @@ jobs:
               id: send-message-fail
               with:
                   MESSAGE_TEXT: |
-                      :smiling_face_with_tear: Упс, тест упал, но я уже создал <${{steps.pull-request.outputs.pull-request-url}}|пулл реквест> с новыми скриншотами, проверьте его и, если 'все ок', то смержите.
+                      *Я.Лендинг*
+                      :smiling_face_with_tear: Упс, тест упал, но я уже создал <${{steps.pull-request.outputs.pull-request-url}}|пулл реквест> с новыми скриншотами, проверьте его и, если все ок, то смержите.
 
                       Посмотреть отчёт можно в комментариях к этому посту :point_down: или по <${{steps.pull-request.outputs.pull-request-url }}/files|ссылке>
-                      Если скриншотов нигде нет, то <https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}|здесь> можно посмотреть подробности об ошибке
+                      Если скриншотов нигде нет, то <https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}|здесь> можно посмотреть подробности о возникшей ошибке
                   SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
                   FILENAME: ./app_snapshots/screenshot-diffs.zip
                   CHANNELS: ${{ inputs.SLACK_CHANNEL }}
