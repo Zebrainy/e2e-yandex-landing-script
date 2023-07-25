@@ -36,7 +36,7 @@ jobs:
             - name: Checkout testing repo
               uses: actions/checkout@v2
               with:
-                  repository: zeeeeby/e2e-yandex-landing-script
+                  repository: Zebrainy/e2e-yandex-landing-script
                   path: ./testing
 
             - name: Check for first run
