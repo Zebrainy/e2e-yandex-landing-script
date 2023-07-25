@@ -11,12 +11,7 @@ const takeScreenshot = async (dir: string) => {
 	expect(
 		await page.screenshot({
 			fullPage: false,
-			path:
-				`./app_snapshots/${snapFolder}/received/` +
-				dir +
-				"/" +
-				filename +
-				".png",
+			path: `./app_snapshots/${snapFolder}/received/${dir}/${filename}-snap.png`,
 		})
 	).toMatchImageSnapshot({
 		customSnapshotIdentifier: filename,
