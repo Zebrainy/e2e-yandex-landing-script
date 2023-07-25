@@ -142,5 +142,5 @@ jobs:
                       hello world 2
 
                   SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-                  FILENAME: ./screenshot-diffs.zip
+                  FILENAME: ./app_snapshots/screenshot-diffs.zip
                   CHANNELS: ${{ inputs.SLACK_CHANNEL }}
