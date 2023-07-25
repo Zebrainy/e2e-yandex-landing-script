@@ -85,7 +85,7 @@ jobs:
                   yarn cross-env CONFIG_PATH=$GITHUB_WORKSPACE/${{ inputs.TEST_CONFIG_FILENAME }} YANDEX_TOKEN='${{ inputs.YANDEX_AUTH_TOKEN }}' yarn test
 
             - name: Copy updated snapshots back
-              if: ${{ env.IS_FIRST_RUN == 'true' || (always() && steps.run_test.outcome == 'failure')}}
+              if: ${{ env.IS_FIRST_RUN == 'true' || ( !cancelled() && steps.run_test.outcome == 'failure')}}
               run: |
                   pushd ./testing/app_snapshots/
                   rm -rf ./**/base
@@ -93,12 +93,12 @@ jobs:
                   cp -R . $GITHUB_WORKSPACE/app_snapshots/  2>/dev/null || :
 
             - name: Get current branch name
-              if: ${{ env.IS_FIRST_RUN == 'true' || (always() && steps.run_test.outcome == 'failure')}}
+              if: ${{ env.IS_FIRST_RUN == 'true' || ( !cancelled() && steps.run_test.outcome == 'failure')}}
               id: get_branch_name
               run: echo "CURRENT_BRANCH=$(echo ${GITHUB_REF##*/})" >> $GITHUB_OUTPUT
 
             - name: Create pull request
-              if: ${{ env.IS_FIRST_RUN == 'true' || (always() && steps.run_test.outcome == 'failure')}}
+              if: ${{ env.IS_FIRST_RUN == 'true' || ( !cancelled() && steps.run_test.outcome == 'failure')}}
               uses: peter-evans/create-pull-request@v3
               with:
                   token: ${{ secrets.MY_GITHUB_TOKEN }}
@@ -115,7 +115,7 @@ jobs:
 
             - name: Prepare result
               id: prepare-result
-              if: ${{ env.IS_FIRST_RUN == 'true' || (always() && steps.run_test.outcome == 'failure')}}
+              if: ${{ env.IS_FIRST_RUN == 'true' || ( !cancelled() && steps.run_test.outcome == 'failure')}}
               run: |
                   pushd ./app_snapshots/
                   rm -rf ./**/received
@@ -134,7 +134,7 @@ jobs:
                   CHANNELS: ${{ inputs.SLACK_CHANNEL }}
 
             - name: Send report in slack for diff found
-              if: ${{ always() && steps.run_test.outcome == 'failure'}}
+              if: ${{  !cancelled() && steps.run_test.outcome == 'failure'}}
               uses: Zebrainy/slack-send@v1
               id: send-message-2
               with:
