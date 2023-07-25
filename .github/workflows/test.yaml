@@ -1,0 +1,31 @@
+on:
+    push:
+        branches:
+            - "main"
+
+jobs:
+    get-config:
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                shell: bash
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Get config
+              id: config
+              run: |
+                 echo "::set-output name=config::$(cat test_config.json)"
+        outputs:
+            config_string: ${{ steps.config.outputs.config }}
+
+    call-workflow-passing-data:
+        needs: get-config
+        uses: ./run_tests.yaml
+        with:
+            MY_GITHUB_TOKEN: "asd"
+            SLACK_CHANNEL: "asd"
+            SLACK_TOKEN: "sadasd"
+            TEST_CONFIG: ${{ needs.get-config.outputs.config_string }}
+            YANDEX_AUTH_TOKEN: "y0_AgAAAABqc4YJAAfRvwAAAADicLhEuPaRfIVyShiC1mB-Ec5bUzVo2Ds"

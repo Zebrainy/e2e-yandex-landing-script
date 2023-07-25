@@ -1,0 +1,23 @@
+dist
+.cache/
+coverage/
+5
+
+
+!dist/index.html
+node_modules/
+*.log
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+/build
+
+/screenshots
+/e2e/client/snaps/*  
+/e2e/client/paths.json

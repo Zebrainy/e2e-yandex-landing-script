@@ -1,0 +1,138 @@
+name: Reusable workflow - test
+on:
+    workflow_call:
+        inputs:
+            SLACK_CHANNEL:
+                description: "channel for reports"
+                required: true
+                type: string
+            TEST_CONFIG_FILENAME:
+                description: "config for test"
+                required: true
+                type: string
+            YANDEX_AUTH_TOKEN:
+                description: "token for authed and non payed account"
+                required: true
+                type: string
+        secrets:
+            MY_GITHUB_TOKEN:
+                description: "token for access to current repo"
+                required: true
+            SLACK_TOKEN:
+                description: "token for access message api"
+                required: true
+
+jobs:
+    test:
+        name: test
+        runs-on: self-hosted
+        defaults:
+            run:
+                shell: bash
+        steps:
+            - name: Checkout current repo
+              uses: actions/checkout@v2
+
+            - name: Checkout testing repo
+              uses: actions/checkout@v2
+              with:
+                  repository: zeeeeby/e2e-yandex-landing-script
+                  path: ./testing
+
+            - name: Check for first run
+              run: echo "IS_FIRST_RUN=$([ -d "app_snapshots" ] && echo "false" || echo "true" )" >> $GITHUB_ENV
+
+            - name: Copy based snapshots folder
+              shell: bash
+              run: |
+                  cp -R app_snapshots ./testing/  2>/dev/null || :
+
+            - name: Convert config to string
+              id: convert-config
+              run: |
+                  echo "TEST_CONFIG=$(cat ${{ inputs.TEST_CONFIG_FILENAME }} | tr -d '\n')" >> $GITHUB_OUTPUT
+
+            # - name: Get yarn cache directory path
+            #   working-directory: ./testing
+            #   id: yarn-cache-dir-path
+            #   run: echo "::set-output name=dir::$(yarn cache dir)"
+
+            # - uses: actions/cache@v2
+            #   id: yarn-cache
+            #   with:
+            #       path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            #       key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+            #       restore-keys: |
+            #           ${{ runner.os }}-yarn-
+
+            - name: Install dependencies
+              working-directory: ./testing
+              run: |
+                  yarn
+
+            - name: Run tests
+              id: run_test
+              working-directory: ./testing
+              run: |
+                  yarn start -- $GITHUB_WORKSPACE/${{ inputs.TEST_CONFIG_FILENAME }} '${{ inputs.YANDEX_AUTH_TOKEN }}'
+
+            - name: Copy updated snapshots back
+            #   if: ${{ env.IS_FIRST_RUN == 'true' || steps.run_test.outcome == 'failure'}}
+              run: |
+                  pushd ./testing/app_snapshots/
+                  rm -rf ./**/base
+                  for f in ./**/received; do mv "$f" "$(echo "$f" | sed s/received/base/)"; done
+                  cp -R . $GITHUB_WORKSPACE/app_snapshots/  2>/dev/null || :
+
+            - name: Get current branch name
+            #   if: ${{ env.IS_FIRST_RUN == 'true' || steps.run_test.outcome == 'failure'}}
+              id: get_branch_name
+              run: echo "CURRENT_BRANCH=$(echo ${GITHUB_REF##*/})" >> $GITHUB_OUTPUT
+
+            - name: Create pull request
+            #   if: ${{ env.IS_FIRST_RUN == 'true' || steps.run_test.outcome == 'failure'}}
+              uses: peter-evans/create-pull-request@v3
+              with:
+                  token: ${{ secrets.MY_GITHUB_TOKEN }}
+                  commit-message: "Update snapshots"
+                  title: "Add new base snapshots"
+                  body: "Update snapshots"
+                  committer: GitHub <noreply@github.com>
+                  author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+                  branch: "update-snapshots"
+                  delete-branch: true
+                  base: ${{ steps.get_branch_name.outputs.CURRENT_BRANCH }}
+                  add-paths: |
+                      ./app_snapshots/**/base/*
+
+            - name: Prepare result
+              id: prepare-result
+              if: ${{ env.IS_FIRST_RUN == 'true' || steps.run_test.outcome == 'failure'}}
+              run: |
+                  pushd ./app_snapshots/
+                  rm -rf ./**/received/*
+                  rm -rf ./**/base/*
+                  zip -r screenshot-diffs.zip *
+
+            - name: Send report in slack for first run
+              if: ${{ env.IS_FIRST_RUN == 'true' }}
+              uses: Zebrainy/slack-send@v1
+              id: send-message
+              with:
+                  MESSAGE_TEXT: |
+                      hello world 1
+
+                  SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+                  CHANNELS: ${{ inputs.SLACK_CHANNEL }}
+
+            - name: Send report in slack for diff found
+              if: ${{ steps.run_test.outcome == 'failure'}}
+              uses: Zebrainy/slack-send@v1
+              id: send-message-2
+              with:
+                  MESSAGE_TEXT: |
+                      hello world 2
+
+                  SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+                  FILENAME: ./screenshot-diffs.zip
+                  CHANNELS: ${{ inputs.SLACK_CHANNEL }}
