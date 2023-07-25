@@ -122,7 +122,7 @@ jobs:
                   rm -rf ./**/base
                   zip -r screenshot-diffs.zip *
 
-            - name: Send report in slack for first run
+            - name: Send report in slack if first run
               if: ${{ env.IS_FIRST_RUN == 'true' }}
               uses: Zebrainy/slack-send@v1
               id: send-message
@@ -133,7 +133,7 @@ jobs:
                   SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
                   CHANNELS: ${{ inputs.SLACK_CHANNEL }}
 
-            - name: Send report in slack for diff found
+            - name: Send report in slack if diff found
               if: ${{  !cancelled() && steps.run_test.outcome == 'failure'}}
               uses: Zebrainy/slack-send@v1
               id: send-message-2
