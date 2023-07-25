@@ -118,8 +118,8 @@ jobs:
               if: ${{ env.IS_FIRST_RUN == 'true' || (always() && steps.run_test.outcome == 'failure')}}
               run: |
                   pushd ./app_snapshots/
-                  rm -rf ./**/received/*
-                  rm -rf ./**/base/*
+                  rm -rf ./**/received
+                  rm -rf ./**/base
                   zip -r screenshot-diffs.zip *
 
             - name: Send report in slack for first run
