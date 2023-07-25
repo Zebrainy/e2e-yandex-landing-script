@@ -82,7 +82,7 @@ jobs:
               id: run_test
               working-directory: ./testing
               run: |
-                  cross-env CONFIG_PATH=$GITHUB_WORKSPACE/${{ inputs.TEST_CONFIG_FILENAME }} YANDEX_TOKEN='${{ inputs.YANDEX_AUTH_TOKEN }}' yarn test
+                  yarn cross-env CONFIG_PATH=$GITHUB_WORKSPACE/${{ inputs.TEST_CONFIG_FILENAME }} YANDEX_TOKEN='${{ inputs.YANDEX_AUTH_TOKEN }}' yarn test
 
             - name: Copy updated snapshots back
               if: ${{ env.IS_FIRST_RUN == 'true' || (always() && steps.run_test.outcome == 'failure')}}
