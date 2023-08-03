@@ -21,7 +21,18 @@ on:
             SLACK_TOKEN:
                 description: "token for access message api"
                 required: true
-
+            VPN_ENDPOINT:
+                description: "VPN_ENDPOINT"
+                required: true
+            VPN_ENDPOINT_PUBLIC:
+                description: "VPN_ENDPOINT_PUBLIC"
+                required: true
+            VPN_PRIVATE:
+                description: "VPN_PRIVATE"
+                required: true
+            VPN_PRESHARED:
+                description: "VPN_PRESHARED"
+                required: true
 jobs:
     test:
         name: test
@@ -38,6 +49,16 @@ jobs:
               with:
                   repository: Zebrainy/e2e-yandex-landing-script
                   path: ./testing
+
+            - name: Set up WireGuard
+              uses: egor-tensin/setup-wireguard@v1
+              with:
+                  endpoint: "${{ secrets.VPN_ENDPOINT }}"
+                  endpoint_public_key: "${{ secrets.VPN_ENDPOINT_PUBLIC }}"
+                  private_key: "${{ secrets.VPN_PRIVATE }}"
+                  preshared_key: "${{ secrets.VPN_PRESHARED }}"
+                  ips: 192.168.143.254/24,fd8c:bc10:5021::192.168.143.254/48
+                  allowed_ips: 192.168.143.0/24,fd8c:bc10:5021::/48
 
             - name: Setup Node.js
               uses: actions/setup-node@v1
