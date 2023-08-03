@@ -36,7 +36,7 @@ on:
 jobs:
     test:
         name: test
-        runs-on: [selfhosted-ru]
+        runs-on: [ubuntu-latest]
         defaults:
             run:
                 shell: bash
