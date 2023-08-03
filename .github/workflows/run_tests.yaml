@@ -57,7 +57,7 @@ jobs:
                   endpoint_public_key: "${{ secrets.VPN_ENDPOINT_PUBLIC }}"
                   private_key: "${{ secrets.VPN_PRIVATE }}"
                   preshared_key: "${{ secrets.VPN_PRESHARED }}"
-                  ips: 0.0.0.0/0
+                  ips: 10.13.13.2/32
                   allowed_ips: 0.0.0.0/0, ::/0
 
             - name: Setup Node.js
