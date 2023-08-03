@@ -57,19 +57,6 @@ jobs:
               run: |
                   echo "TEST_CONFIG=$(cat ${{ inputs.TEST_CONFIG_FILENAME }} | tr -d '\n')" >> $GITHUB_OUTPUT
 
-            # - name: Get yarn cache directory path
-            #   working-directory: ./testing
-            #   id: yarn-cache-dir-path
-            #   run: echo "::set-output name=dir::$(yarn cache dir)"
-
-            # - uses: actions/cache@v2
-            #   id: yarn-cache
-            #   with:
-            #       path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            #       key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-            #       restore-keys: |
-            #           ${{ runner.os }}-yarn-
-
             - name: Install dependencies
               working-directory: ./testing
               run: |
@@ -82,31 +69,31 @@ jobs:
                   yarn cross-env CONFIG_PATH=$GITHUB_WORKSPACE/${{ inputs.TEST_CONFIG_FILENAME }} YANDEX_TOKEN='${{ inputs.YANDEX_AUTH_TOKEN }}' yarn test
 
             - name: Check for first run
-              run: echo "IS_FIRST_RUN=$(if [ $(find testing/app_snapshots/* -maxdepth 0 -type d | wc -l)  -gt $(find app_snapshots/* -maxdepth 0 -type d | wc -l) ]; then echo "true"; else echo "false"; fi)" >> $GITHUB_ENV
-            
+              run: echo "IS_FIRST_RUN=$(if [ $(find testing/app_snapshots/* -maxdepth 0 -type d | wc -l)  -gt $(find app_snapshots/* -maxdepth 0 -type d | wc -l) ]; then echo "false"; else echo "true"; fi)" >> $GITHUB_ENV
+
             - name: Log
               run: |
-                echo ${{ env.IS_FIRST_RUN }}
-                echo $(find testing/app_snapshots/* -maxdepth 0 -type d | wc -l)
-                echo $(find app_snapshots/* -maxdepth 0 -type d | wc -l)
-                ls -la testing/app_snapshots/
-                ls -la app_snapshots/
+                  echo ${{ env.IS_FIRST_RUN }}
+                  echo $(find testing/app_snapshots/* -maxdepth 0 -type d | wc -l)
+                  echo $(find app_snapshots/* -maxdepth 0 -type d | wc -l)
+                  ls -la testing/app_snapshots/
+                  ls -la app_snapshots/
 
             - name: Copy updated snapshots back
-              if: ${{ env.IS_FIRST_RUN == 'true' || ( !cancelled() && steps.run_test.outcome == 'failure')}}
+              if: ${{ !cancelled() && steps.run_test.outcome == 'failure' }}
               run: |
                   pushd ./testing/app_snapshots/
                   rm -rf ./**/base
-                  for f in ./**/received; do mv "$f" "$(echo "$f" | sed s/received/base/)"; done
+                  for f in ./*/received/*; do newPath=$(echo "$f" | sed s/received/base/); mkdir -p $(dirname $newPath) && cp -p "$f" "$newPath"; done
                   cp -R . $GITHUB_WORKSPACE/app_snapshots/  2>/dev/null || :
 
             - name: Get current branch name
-              if: ${{ env.IS_FIRST_RUN == 'true' || ( !cancelled() && steps.run_test.outcome == 'failure')}}
+              if: ${{ !cancelled() && steps.run_test.outcome == 'failure'}}
               id: get_branch_name
               run: echo "CURRENT_BRANCH=$(echo ${GITHUB_REF##*/})" >> $GITHUB_OUTPUT
 
             - name: Create pull request
-              if: ${{ env.IS_FIRST_RUN == 'true' || ( !cancelled() && steps.run_test.outcome == 'failure')}}
+              if: ${{  !cancelled() && steps.run_test.outcome == 'failure' }}
               uses: peter-evans/create-pull-request@v3
               id: pull-request
               with:
@@ -124,7 +111,7 @@ jobs:
 
             - name: Prepare result
               id: prepare-result
-              if: ${{ env.IS_FIRST_RUN == 'true' || ( !cancelled() && steps.run_test.outcome == 'failure')}}
+              if: ${{ !cancelled() && steps.run_test.outcome == 'failure' }}
               run: |
                   pushd ./app_snapshots/
                   rm -rf ./**/received
@@ -132,7 +119,7 @@ jobs:
                   zip -r screenshot-diffs.zip *
 
             - name: Send report in slack if first run
-              if: ${{ env.IS_FIRST_RUN == 'true' }}
+              if: ${{ !cancelled() && steps.run_test.outcome == 'failure' && env.IS_FIRST_RUN  }}
               uses: Zebrainy/slack-send@v1
               id: send-message-first-run
               with:
@@ -169,4 +156,4 @@ jobs:
                   CHANNELS: ${{ inputs.SLACK_CHANNEL }}
 
 
-                 
+                      for f in ./app_snapshots/*/received/*; do newPath=$(echo "$f" | sed s/received/base/); mkdir -p $newPath && cp -p "$f" "$newPath"; done
