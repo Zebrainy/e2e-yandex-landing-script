@@ -40,6 +40,7 @@ const readDirToList = (path: string) => {
 	}
 }
 
+let hasErrors = false
 describe("Test", () => {
 	const cfg = fs.readFileSync(process.env.CONFIG_PATH, "utf8")
 	const testCfg = JSON.parse(cfg) as TestCfg
@@ -48,7 +49,6 @@ describe("Test", () => {
 		const hash = getHash(test.url)
 		const baseSnapshots = readDirToList(`./app_snapshots/${hash}/base`)
 
-		console.log("test",test)
 		it("First page", async () => {
 			let failsCounts = 0
 			await openPage(page, test.url)
@@ -71,9 +71,13 @@ describe("Test", () => {
 					failsCounts++
 				}
 			}
-			if (failsCounts === baseSnapshots.length)
-				throw new Error("snapshots diff found")
-			process.exit(0)
+			if (failsCounts === baseSnapshots.length) {
+				hasErrors = true
+				// throw new Error("snapshots diff found")
+			}
 		})
 	}
+})
+afterAll((cb) => {
+	process.exit(hasErrors ? 1 : 0)
 })
