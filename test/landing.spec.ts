@@ -48,6 +48,7 @@ describe("Test", () => {
 		const hash = getHash(test.url)
 		const baseSnapshots = readDirToList(`./app_snapshots/${hash}/base`)
 
+		console.log("test",test)
 		it("First page", async () => {
 			let failsCounts = 0
 			await openPage(page, test.url)
