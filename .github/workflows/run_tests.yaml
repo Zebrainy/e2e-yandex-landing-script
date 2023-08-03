@@ -154,6 +154,3 @@ jobs:
                       <https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}|Подробнее>
                   SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
                   CHANNELS: ${{ inputs.SLACK_CHANNEL }}
-
-
-                      for f in ./app_snapshots/*/received/*; do newPath=$(echo "$f" | sed s/received/base/); mkdir -p $newPath && cp -p "$f" "$newPath"; done
