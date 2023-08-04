@@ -107,7 +107,7 @@ jobs:
               id: handle-result
               if: ${{ !cancelled() && steps.run_test.outcome == 'failure' }}
               run: |
-                  pushd ./testing/app_snapshots/diff
+                  pushd ./testing/
 
                   export PULL_REQUEST_URL="${{ steps.pull-request.outputs.pull-request-url }}"
                   export SLACK_TOKEN=${{ secrets.SLACK_TOKEN }}
