@@ -21,17 +21,8 @@ on:
             SLACK_TOKEN:
                 description: "token for access message api"
                 required: true
-            VPN_ENDPOINT:
-                description: "VPN_ENDPOINT"
-                required: true
-            VPN_ENDPOINT_PUBLIC:
-                description: "VPN_ENDPOINT_PUBLIC"
-                required: true
-            VPN_PRIVATE:
-                description: "VPN_PRIVATE"
-                required: true
-            VPN_PRESHARED:
-                description: "VPN_PRESHARED"
+            PROXY_PASSWORD:
+                description: "password for proxy"
                 required: true
 jobs:
     test:
@@ -77,7 +68,7 @@ jobs:
               id: run_test
               working-directory: ./testing
               run: |
-                  yarn cross-env CONFIG_PATH=$GITHUB_WORKSPACE/${{ inputs.TEST_CONFIG_FILENAME }} YANDEX_TOKEN='${{ inputs.YANDEX_AUTH_TOKEN }}' yarn test
+                  yarn cross-env CONFIG_PATH=$GITHUB_WORKSPACE/${{ inputs.TEST_CONFIG_FILENAME }} YANDEX_TOKEN='${{ inputs.YANDEX_AUTH_TOKEN }}' PROXY_PASSWORD='${{secrets.PROXY_PASSWORD}}' yarn test
 
             - name: Check for first run
               run: echo "IS_FIRST_RUN=$(if [ $(find testing/app_snapshots/* -maxdepth 0 -type d | wc -l)  -gt $(find app_snapshots/* -maxdepth 0 -type d | wc -l) ]; then echo "false"; else echo "true"; fi)" >> $GITHUB_ENV
