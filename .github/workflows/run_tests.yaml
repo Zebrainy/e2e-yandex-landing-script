@@ -69,10 +69,7 @@ jobs:
               working-directory: ./testing
               run: |
                   yarn cross-env CONFIG_PATH=$GITHUB_WORKSPACE/${{ inputs.TEST_CONFIG_FILENAME }} YANDEX_TOKEN='${{ inputs.YANDEX_AUTH_TOKEN }}' PROXY_PASSWORD='${{secrets.PROXY_PASSWORD}}' yarn test
-
-            - name: Check for first run
-              run: echo "IS_FIRST_RUN=$(if [ $(find testing/app_snapshots/* -maxdepth 0 -type d | wc -l)  -gt $(find app_snapshots/* -maxdepth 0 -type d | wc -l) ]; then echo "false"; else echo "true"; fi)" >> $GITHUB_ENV
-
+                  
             - name: Copy updated snapshots back
               if: ${{ !cancelled() && steps.run_test.outcome == 'failure' }}
               run: |
@@ -117,7 +114,7 @@ jobs:
                   if [ $(ls ./app_snapshots/diff  2>/dev/null | wc -l) -gt 0 ];
                   then
                       yarn report-diff 
-                  elif [ $PULL_REQUEST_URL != "" ]
+                  elif [[ -n $PULL_REQUEST_URL  ]]
                   then
                       yarn report-new
                   else
