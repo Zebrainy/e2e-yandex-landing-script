@@ -2,6 +2,7 @@ import { Page } from "playwright"
 import { toMatchImageSnapshot } from "jest-image-snapshot"
 import fs from "fs"
 import { getHash } from "../src/hash"
+import path from "path"
 
 expect.extend({ toMatchImageSnapshot })
 
@@ -16,7 +17,7 @@ const takeScreenshot = async (
 		customSnapshotIdentifier: fileName,
 
 		customSnapshotsDir: `./app_snapshots/${dirName}/base/`,
-		customDiffDir: `./app_snapshots/${dirName}/diff/`,
+		customDiffDir: `./app_snapshots/diff/${dirName}/`,
 		failureThreshold: 0.005,
 		failureThresholdType: "percent",
 	})
@@ -45,8 +46,11 @@ describe("Test", () => {
 	const cfg = fs.readFileSync(process.env.CONFIG_PATH, "utf8")
 	const testCfg = JSON.parse(cfg) as TestCfg
 
+	const configHashMap = {} as Record<string, string>
 	for (let test of testCfg) {
 		const hash = getHash(test.url)
+		configHashMap[hash] = test.url
+
 		const baseSnapshots = readDirToList(`./app_snapshots/${hash}/base`)
 
 		it("First page", async () => {
@@ -73,10 +77,14 @@ describe("Test", () => {
 			}
 			if (failsCounts === baseSnapshots.length) {
 				hasErrors = true
-				// throw new Error("snapshots diff found")
 			}
 		})
 	}
+	fs.writeFileSync(
+		path.join(__dirname, "../test_config.map.json"),
+		JSON.stringify(configHashMap),
+		"utf8"
+	)
 })
 afterAll((cb) => {
 	process.exit(hasErrors ? 1 : 0)

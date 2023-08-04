@@ -73,14 +73,6 @@ jobs:
             - name: Check for first run
               run: echo "IS_FIRST_RUN=$(if [ $(find testing/app_snapshots/* -maxdepth 0 -type d | wc -l)  -gt $(find app_snapshots/* -maxdepth 0 -type d | wc -l) ]; then echo "false"; else echo "true"; fi)" >> $GITHUB_ENV
 
-            - name: Log
-              run: |
-                  echo ${{ env.IS_FIRST_RUN }}
-                  echo $(find testing/app_snapshots/* -maxdepth 0 -type d | wc -l)
-                  echo $(find app_snapshots/* -maxdepth 0 -type d | wc -l)
-                  ls -la testing/app_snapshots/
-                  ls -la app_snapshots/
-
             - name: Copy updated snapshots back
               if: ${{ !cancelled() && steps.run_test.outcome == 'failure' }}
               run: |
@@ -111,48 +103,24 @@ jobs:
                   add-paths: |
                       ./app_snapshots/**/base/*
 
-            - name: Prepare result
-              id: prepare-result
+            - name: Handle result
+              id: handle-result
               if: ${{ !cancelled() && steps.run_test.outcome == 'failure' }}
               run: |
-                  pushd ./app_snapshots/
-                  rm -rf ./**/received
-                  rm -rf ./**/base
-                  zip -r screenshot-diffs.zip *
+                  pushd ./testing/app_snapshots/diff
 
-            - name: Send report in slack if first run
-              if: ${{ !cancelled() && steps.run_test.outcome == 'failure' && env.IS_FIRST_RUN  }}
-              uses: Zebrainy/slack-send@v1
-              id: send-message-first-run
-              with:
-                  MESSAGE_TEXT: |
-                      *Я.Лендинг*
-                      :white_check_mark: Первый запуск тестов прошёл успешно. Скриншоты отправлены <${{steps.pull-request.outputs.pull-request-url}}|пулл реквестом>
-                  SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-                  CHANNELS: ${{ inputs.SLACK_CHANNEL }}
+                  export PULL_REQUEST_URL="${{ steps.pull-request.outputs.pull-request-url }}"
+                  export SLACK_TOKEN=${{ secrets.SLACK_TOKEN }}
+                  export SLACK_CHANNEL=${{ inputs.SLACK_CHANNEL }}
+                  export GITHUB_ACTION_URL="https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}"
 
-            - name: Send report in slack if diff found
-              if: ${{  !cancelled() && steps.run_test.outcome == 'failure' && steps.pull-request.outputs.pull-request-url != ''}}
-              uses: Zebrainy/slack-send@v1
-              id: send-message-diff
-              with:
-                  MESSAGE_TEXT: |
-                      *Я.Лендинг*
-                      :smiling_face_with_tear: Упс, тест упал, но я уже создал <${{steps.pull-request.outputs.pull-request-url}}|пулл реквест> с новыми скриншотами.
-
-                      Посмотреть скриншоты можно в комментариях к этому посту:point_down: или по <${{steps.pull-request.outputs.pull-request-url }}/files|ссылке>
-                  SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-                  FILENAME: ./app_snapshots/screenshot-diffs.zip
-                  CHANNELS: ${{ inputs.SLACK_CHANNEL }}
-
-            - name: Send report in slack if something went wrong
-              if: ${{  !cancelled() && steps.run_test.outcome == 'failure' && steps.pull-request.outputs.pull-request-url == ''}}
-              uses: Zebrainy/slack-send@v1
-              id: send-message-fail-very-bad
-              with:
-                  MESSAGE_TEXT: |
-                      *Я.Лендинг*
-                      :smiling_face_with_tear: Упс, тест упал по неизвестной причине.
-                      <https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}|Подробнее>
-                  SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-                  CHANNELS: ${{ inputs.SLACK_CHANNEL }}
+                  if [ $(ls | wc -l) -gt 0 ];
+                  then
+                      yarn report-diff 
+                  elif [ $PULL_REQUEST_URL != "" ]
+                  then
+                      yarn report-new
+                  elif
+                  then
+                      yarn report-errors
+                  fi
