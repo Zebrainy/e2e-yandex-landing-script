@@ -108,6 +108,11 @@ module.exports = {
 	launchOptions: {
 		headless: true,
 		args: ["--disable-web-security"],
+		proxy: {
+			server: "http://51.250.36.77:3128",
+			username: "user",
+			password: process.env.PROXY_PASSWORD,
+		},
 	},
 
 	// useDefaultBrowserType: true,

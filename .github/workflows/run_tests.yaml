@@ -50,16 +50,6 @@ jobs:
                   repository: Zebrainy/e2e-yandex-landing-script
                   path: ./testing
 
-            - name: Set up WireGuard
-              uses: egor-tensin/setup-wireguard@v1
-              with:
-                  endpoint: "${{ secrets.VPN_ENDPOINT }}"
-                  endpoint_public_key: "${{ secrets.VPN_ENDPOINT_PUBLIC }}"
-                  private_key: "${{ secrets.VPN_PRIVATE }}"
-                  preshared_key: "${{ secrets.VPN_PRESHARED }}"
-                  ips: 10.13.13.2/32
-                  allowed_ips: 0.0.0.0/0, ::/0
-
             - name: Setup Node.js
               uses: actions/setup-node@v1
               with:
