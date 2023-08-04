@@ -120,7 +120,6 @@ jobs:
                   elif [ -n $PULL_REQUEST_URL ]
                   then
                       yarn report-new
-                  elif
-                  then
+                  else
                       yarn report-errors
                   fi
