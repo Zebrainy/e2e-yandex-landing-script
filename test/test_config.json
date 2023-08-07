@@ -1,0 +1,52 @@
+[
+	{
+		"url": "https://plus.yandex.ru/kids?mode=OAUTH_WEB&openPaymentPopup=1&openWidget=1&widgetServiceName=skazbuka_ios_{0}&utm_source=skazbuka_ios&utm_monitoring=1",
+		"delay": 1000
+	},
+	{
+		"url": "https://plus.yandex.ru/kids?mode=OAUTH_WEB&openWidget=1&widgetServiceName=skazbuka_ios_{0}&utm_source=skazbuka_ios&utm_monitoring=1",
+		"delay": 1000
+	},
+	{
+		"url": "https://plus.yandex.ru/kids?mode=OAUTH_WEB&openPaymentPopup=1&openWidget=1&widgetServiceName=skazbuka_android_{0}&utm_source=skazbuka_android&utm_monitoring=1",
+		"delay": 1000
+	},
+	{
+		"url": "https://plus.yandex.ru/kids?mode=OAUTH_WEB&openWidget=1&widgetServiceName=skazbuka_android_{0}&utm_source=skazbuka_android&utm_monitoring=1",
+		"delay": 1000
+	},
+
+	{
+		"url": "https://plus.yandex.ru/kubokot?openPaymentPopup=1&openWidget=1&mode=OAUTH_WEB&widgetServiceName=kubokot_android&utm_source=kubokot_android&utm_monitoring=1",
+		"delay": 1000
+	},
+	{
+		"url": "https://plus.yandex.ru/kubokot?mode=OAUTH_WEB&widgetServiceName=kubokot_android&utm_source=kubokot_android&utm_monitoring=1",
+		"delay": 1000
+	},
+	{
+		"url": "https://plus.yandex.ru/kubokot?openPaymentPopup=1&openWidget=1&mode=OAUTH_WEB&widgetServiceName=kubokot_ios&utm_source=kubokot_ios&utm_monitoring=1",
+		"delay": 1000
+	},
+	{
+		"url": "https://plus.yandex.ru/kubokot?mode=OAUTH_WEB&widgetServiceName=kubokot_ios&utm_source=kubokot_ios&utm_monitoring=1",
+		"delay": 1000
+	},
+
+	{
+		"url": "https://plus.yandex.ru/animopus?openPaymentPopup=1&openWidget=1&mode=OAUTH_WEB&widgetServiceName=animopus_android&utm_source=animopus_android&utm_monitoring=1",
+		"delay": 1000
+	},
+	{
+		"url": "https://plus.yandex.ru/animopus?mode=OAUTH_WEB&widgetServiceName=animopus_android&utm_source=animopus_android&utm_monitoring=1",
+		"delay": 1000
+	},
+	{
+		"url": "https://plus.yandex.ru/animopus?openPaymentPopup=1&openWidget=1&mode=OAUTH_WEB&widgetServiceName=animopus_ios&utm_source=animopus_ios&utm_monitoring=1",
+		"delay": 1000
+	},
+	{
+		"url": "https://plus.yandex.ru/animopus?mode=OAUTH_WEB&widgetServiceName=animopus_ios&utm_source=animopus_ios&utm_monitoring=1",
+		"delay": 1000
+	}
+]
