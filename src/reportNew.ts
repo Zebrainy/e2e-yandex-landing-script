@@ -7,7 +7,7 @@ const SLACK_CHANNEL = process.env.SLACK_CHANNEL || ""
 ;(async () => {
 	const { ts } = await slackClient.chat.postMessage({
 		channel: SLACK_CHANNEL,
-		text: `*Я.Лендинг*\n:tada: Появились новые скриншоты. <${process.env.PULL_REQUEST_URL}|пулл реквест>`,
+		text: `*Я.Лендинг*\n:tada: Появились новые скриншоты. <${process.env.PULL_REQUEST_URL}|Пулл реквест>`,
 	})
 	const newFilesList = fs
 		.readFileSync(path.join(__dirname, "../app_snapshots/newFiles"), {
