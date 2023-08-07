@@ -75,11 +75,15 @@ jobs:
               run: |
                   pushd ./testing/app_snapshots/
                   touch newFiles
+
+                  # добавляет "новые скриншоты" в base и записывает их в файл newFiles для дальнейшего логирования в мессенджер
+                  # новые скриншоты это те, которые есть в папке received, но нет в папке base
                   for f in ./*/received/*; do
                     newPath=$(echo "$f" | sed s/received/base/);
                     [[ -d $(dirname $newPath) ]] || (mkdir -p $(dirname $newPath) && cp -p "$f" "$newPath" && echo $f >> newFiles);
                   done
 
+                  # копирует все скриншоты из папки diff в папку base
                   for f in ./diff/*/*; do
                     hash=$(basename "$(dirname $f)");
                     cp "$f" "$hash/base/";
@@ -125,8 +129,7 @@ jobs:
                   then
                       yarn report-diff 
                       yarn report-new
-                  # если есть ссылка на пул реквест
-                  elif [[ -n $PULL_REQUEST_URL  ]]
+                  elif [ "$PULL_REQUEST_URL" != "" ]
                   then
                       yarn report-new
                   else
