@@ -75,7 +75,9 @@ jobs:
               run: |
                   pushd ./testing/app_snapshots/
                   rm -rf ./**/base
-                  for f in ./*/received/*; do newPath=$(echo "$f" | sed s/received/base/); mkdir -p $(dirname $newPath) && cp -p "$f" "$newPath"; done
+                  for f in ./*/received/*; do newPath=$(echo "$f" | sed s/received/base/); [[ -d $(dirname $newPath) ]] || (mkdir -p $(dirname $newPath) && cp -p "$f" "$newPath"); done
+                  for f in ./diff/*/*; do hash=$(basename "$(dirname $f)"); cp $f $hash/base/ ; done 2> /dev/null || :
+
                   cp -R . $GITHUB_WORKSPACE/app_snapshots/  2>/dev/null || :
 
             - name: Get current branch name
