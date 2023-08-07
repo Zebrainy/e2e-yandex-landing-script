@@ -5,10 +5,6 @@ import os from "os"
 
 const SLACK_CHANNEL = process.env.SLACK_CHANNEL || ""
 ;(async () => {
-	const { ts } = await slackClient.chat.postMessage({
-		channel: SLACK_CHANNEL,
-		text: `*Я.Лендинг*\n:tada: Появились новые скриншоты. <${process.env.PULL_REQUEST_URL}|Пулл реквест>`,
-	})
 	const newFilesList = fs
 		.readFileSync(path.join(__dirname, "../app_snapshots/newFiles"), {
 			encoding: "utf-8",
@@ -16,6 +12,13 @@ const SLACK_CHANNEL = process.env.SLACK_CHANNEL || ""
 		.toString()
 		.split(os.EOL)
 		.filter(Boolean)
+
+	if (!newFilesList.length) return
+
+	const { ts } = await slackClient.chat.postMessage({
+		channel: SLACK_CHANNEL,
+		text: `*Я.Лендинг*\n:tada: Появились новые скриншоты. <${process.env.PULL_REQUEST_URL}|Пулл реквест>`,
+	})
 	const configMap = JSON.parse(
 		fs.readFileSync(path.join(__dirname, "../test_config.map.json"), "utf8")
 	) as Record<string, string>
