@@ -80,8 +80,6 @@ jobs:
                     [[ -d $(dirname $newPath) ]] || (mkdir -p $(dirname $newPath) && cp -p "$f" "$newPath" && echo $f >> newFiles);
                   done
 
-                  for f in ./diff/*/*; do hash=$(basename "$(dirname $f)"); cp $f $hash/base/ ; done 2> /dev/null || :
-
                   for f in ./diff/*/*; do
                     hash=$(basename "$(dirname $f)");
                     cp "$f" "$hash/base/";
