@@ -74,8 +74,8 @@ jobs:
               if: ${{ !cancelled() && steps.run_test.outcome == 'failure' }}
               run: |
                   pushd ./testing/app_snapshots/
-                  
-                  for f in ./*/received/*; do newPath=$(echo "$f" | sed s/received/base/); [[ -d $(dirname $newPath) ]] || (mkdir -p $(dirname $newPath) && cp -p "$f" "$newPath"); done
+                  touch newFiles
+                  for f in ./*/received/*; do newPath=$(echo "$f" | sed s/received/base/); [[ -d $(dirname $newPath) ]] || (mkdir -p $(dirname $newPath) && cp -p "$f" "$newPath" && echo $f >> newFiles); done
                   for f in ./diff/*/*; do hash=$(basename "$(dirname $f)"); cp $f $hash/base/ ; done 2> /dev/null || :
 
                   cp -R . $GITHUB_WORKSPACE/app_snapshots/  2>/dev/null || :
