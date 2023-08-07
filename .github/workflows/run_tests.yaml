@@ -74,7 +74,7 @@ jobs:
               if: ${{ !cancelled() && steps.run_test.outcome == 'failure' }}
               run: |
                   pushd ./testing/app_snapshots/
-                  rm -rf ./**/base
+                  
                   for f in ./*/received/*; do newPath=$(echo "$f" | sed s/received/base/); [[ -d $(dirname $newPath) ]] || (mkdir -p $(dirname $newPath) && cp -p "$f" "$newPath"); done
                   for f in ./diff/*/*; do hash=$(basename "$(dirname $f)"); cp $f $hash/base/ ; done 2> /dev/null || :
 
