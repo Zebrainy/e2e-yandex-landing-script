@@ -15,6 +15,7 @@ const SLACK_CHANNEL = process.env.SLACK_CHANNEL || ""
 		})
 		.toString()
 		.split(os.EOL)
+		.filter(Boolean)
 	const configMap = JSON.parse(
 		fs.readFileSync(path.join(__dirname, "../test_config.map.json"), "utf8")
 	) as Record<string, string>
