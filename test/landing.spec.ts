@@ -68,7 +68,7 @@ describe("Test", () => {
 				try {
 					await takeScreenshot(
 						getHash(test.url),
-						screenName.replace("-snap.png", ""),
+						screenName.replace(/-snap.png|-diff.png/, ""),
 						currScreen
 					)
 				} catch {
