@@ -6,7 +6,7 @@ const SLACK_CHANNEL = process.env.SLACK_CHANNEL || ""
 ;(async () => {
 	const { ts } = await slackClient.chat.postMessage({
 		channel: SLACK_CHANNEL,
-		text: `*Я.Лендинг*\n:smiling_face_with_tear: Тесты упали <${process.env.PULL_REQUEST_URL}|пулл реквест>\n\nАЛАРМ БЛЯ!`,
+		text: `*Я.Лендинг*\n:smiling_face_with_tear: Тесты упали, <${process.env.PULL_REQUEST_URL}|пулл реквест>\n\nАЛАРМ БЛЯ!`,
 	})
 	const diffDir = fs.readdirSync(
 		path.join(__dirname, "../app_snapshots/diff")
