@@ -84,7 +84,7 @@ describe("Test", () => {
 
 	fs.writeFileSync(
 		path.join(__dirname, "../test_config.map.json"),
-		JSON.stringify(configHashMap),
+		JSON.stringify(configHashMap, null, 2),
 		"utf8"
 	)
 })
