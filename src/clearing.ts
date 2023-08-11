@@ -10,6 +10,7 @@ import path from "path"
 		path.join(__dirname, "../../app_snapshots/")
 	)
 
+    console.log("foldersToDelete",foldersToDelete)
 	for (let file of foldersToDelete) {
 		if (file in configMap) continue
 
