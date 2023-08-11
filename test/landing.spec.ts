@@ -3,6 +3,7 @@ import { toMatchImageSnapshot } from "jest-image-snapshot"
 import fs from "fs"
 import { getHash } from "../src/hash"
 import path from "path"
+import prettier from "prettier"
 
 expect.extend({ toMatchImageSnapshot })
 
@@ -42,7 +43,7 @@ const readDirToList = (path: string) => {
 }
 
 let hasErrors = false
-describe("Test", () => {
+describe("Test", async () => {
 	const cfg = fs.readFileSync(process.env.CONFIG_PATH, "utf8")
 	const testCfg = JSON.parse(cfg) as TestCfg
 
@@ -80,12 +81,18 @@ describe("Test", () => {
 			}
 		})
 	}
+
+	const pretified = await pretify(JSON.stringify(configHashMap))
+
 	fs.writeFileSync(
 		path.join(__dirname, "../test_config.map.json"),
-		JSON.stringify(configHashMap),
+		pretified,
 		"utf8"
 	)
 })
 afterAll((cb) => {
 	process.exit(hasErrors ? 1 : 0)
 })
+
+const pretify = (str: string) =>
+	prettier.format(str, { parser: "babel", tabWidth: 4, semi: false })
