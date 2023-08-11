@@ -6,7 +6,7 @@ import os from "os"
 const SLACK_CHANNEL = process.env.SLACK_CHANNEL || ""
 ;(async () => {
 	const newFilesList = fs
-		.readFileSync(path.join(__dirname, "../app_snapshots/newFiles"), {
+		.readFileSync(path.join(__dirname, "../newFiles"), {
 			encoding: "utf-8",
 		})
 		.toString()
