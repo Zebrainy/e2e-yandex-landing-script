@@ -5,6 +5,7 @@ import path from "path"
 		fs.readFileSync(path.join(__dirname, "../test_config.map.json"), "utf8")
 	) as Record<string, string>
 
+    console.log("configMap",configMap)
 	const foldersToDelete = fs.readdirSync(
 		path.join(__dirname, "../../app_snapshots/")
 	)
