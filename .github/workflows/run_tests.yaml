@@ -92,9 +92,16 @@ jobs:
                   cp -R . $GITHUB_WORKSPACE/app_snapshots/  2>/dev/null || :
 
             - name: Copy config map
+              if: ${{ !cancelled() && steps.run_test.outcome == 'failure'}}
               run: |
                   cp ./testing/test_config.map.json ./
 
+            - name: Clear unused sties
+              if: ${{ always() }} 
+              run: |
+                  yarn clear-unused-sites
+
+              
             - name: Get current branch name
               if: ${{ !cancelled() && steps.run_test.outcome == 'failure'}}
               id: get_branch_name

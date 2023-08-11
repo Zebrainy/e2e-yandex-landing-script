@@ -8,6 +8,7 @@
 		"report-diff": "ts-node src/reportDiff.ts",
 		"report-new": "ts-node src/reportNew.ts",
 		"report-errors": "ts-node src/reportErrors.ts",
+		"clear-unused-sites": "ts-node src/clearing.ts",
 		"test": "jest",
 		"test.watch": "jest --watchAll"
 	},

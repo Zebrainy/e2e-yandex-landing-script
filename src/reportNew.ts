@@ -36,17 +36,4 @@ const SLACK_CHANNEL = process.env.SLACK_CHANNEL || ""
 			initial_comment: `${url}`,
 		})
 	}
-
-	const foldersToDelete = fs.readdirSync(
-		path.join(__dirname, "../app_snapshots/")
-	)
-
-	for (let file of foldersToDelete) {
-		if (file in configMap) continue 
-		
-		fs.rmSync(path.join(__dirname, "../app_snapshots/", file), {
-			recursive: true,
-			force: true,
-		})
-	}
 })()
