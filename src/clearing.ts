@@ -6,13 +6,13 @@ import path from "path"
 	) as Record<string, string>
 
 	const foldersToDelete = fs.readdirSync(
-		path.join(__dirname, "../app_snapshots/")
+		path.join(__dirname, "../../app_snapshots/")
 	)
 
 	for (let file of foldersToDelete) {
 		if (file in configMap) continue
 
-		fs.rmSync(path.join(__dirname, "../app_snapshots/", file), {
+		fs.rmSync(path.join(__dirname, "../../app_snapshots/", file), {
 			recursive: true,
 			force: true,
 		})
