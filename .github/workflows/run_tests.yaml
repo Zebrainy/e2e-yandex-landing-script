@@ -99,6 +99,7 @@ jobs:
             - name: Clear unused sties
               if: ${{ always() }} 
               run: |
+                  pushd ./testing/
                   yarn clear-unused-sites
 
               
