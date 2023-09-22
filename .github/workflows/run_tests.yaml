@@ -83,12 +83,14 @@ jobs:
                     [[ -d $(dirname $newPath) ]] || (mkdir -p $(dirname $newPath) && cp -p "$f" "$newPath" && echo $f >> ../newFiles);
                   done
 
-                  # копирует все скриншоты из папки received в папку base
-                  for f in ./*/received/*; do
-                    newPath=$(echo "$f" | sed s/received/base/);
-                    cp -p "$f" "$newPath"
+                  # копирует все скриншоты из папки received, для которых есть diff, в папку base
+                  for f in ./diff/*/*; do
+                    hash=$(basename "$(dirname $f)");
+                    receivedPath=$(echo ./$hash/received);
+                    basePath=$(echo "$receivedPath" | sed s/received/base/)
+                    cp $receivedPath/* $basePath
                   done
-
+                  
                   cp -R . $GITHUB_WORKSPACE/app_snapshots/  2>/dev/null || :
 
             - name: Copy config map
