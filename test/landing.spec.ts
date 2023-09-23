@@ -78,6 +78,13 @@ describe("Test", () => {
 			}
 			if (failsCounts === baseSnapshots.length) {
 				hasErrors = true
+			} else {
+				// удалить diff чтобы он не прошёл дальше по флоу, так как истинным diff считается тот, который зафейлился со всеми base
+				const hash = getHash(test.url)
+				fs.rmSync(`./app_snapshots/diff/${hash}`, {
+					force: true,
+					recursive: true,
+				})
 			}
 		})
 	}
