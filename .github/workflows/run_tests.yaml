@@ -84,7 +84,7 @@ jobs:
                   done
 
                   echo "end 1"
-                  ls -R ./diff
+                  ls -R 
                   # копирует все скриншоты из папки received, для которых есть diff, в папку base
                   for f in ./diff/*/*; do
                     hash=$(basename "$(dirname $f)");
