@@ -82,7 +82,8 @@ jobs:
                     newPath=$(echo "$f" | sed s/received/base/);
                     [[ -d $(dirname $newPath) ]] || (mkdir -p $(dirname $newPath) && cp -p "$f" "$newPath" && echo $f >> ../newFiles);
                   done
-                  
+
+                  echo "end 1"
                   # копирует все скриншоты из папки received, для которых есть diff, в папку base
                   for f in ./diff/*/*; do
                     hash=$(basename "$(dirname $f)");
