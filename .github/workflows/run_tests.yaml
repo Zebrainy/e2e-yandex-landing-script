@@ -80,10 +80,15 @@ jobs:
                   # новые скриншоты это те, которые есть в папке received, но нет в папке base
                   for f in ./*/received/*; do
                     newPath=$(echo "$f" | sed s/received/base/);
+                    echo "new path: $newPath"
                     [[ -d $(dirname $newPath) ]] || (mkdir -p $(dirname $newPath) && cp -p "$f" "$newPath" && echo $f >> ../newFiles);
                   done
 
                   cat ../newFiles
+                  echo "test"
+
+                  ls -R 
+                  echo "end"
                   # копирует все скриншоты из папки received, для которых есть diff, в папку base
                   for f in ./diff/*/*; do
                     hash=$(basename "$(dirname $f)");
