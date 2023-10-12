@@ -90,7 +90,7 @@ jobs:
                     hash=$(basename "$(dirname $f)");
                     receivedPath=$(echo ./$hash/received);
                     basePath=$(echo "$receivedPath" | sed s/received/base/)
-                    cp $receivedPath/* $basePath
+                    cp $receivedPath/* $basePath 2>/dev/null || :
                   done
                   echo "end 2"
                   cp -R . $GITHUB_WORKSPACE/app_snapshots/  2>/dev/null || :
