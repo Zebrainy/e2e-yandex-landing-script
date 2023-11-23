@@ -1,11 +1,12 @@
-import { slackClient } from "./slack"
+import { TelegramBot } from "./telegram"
 import fs from "fs"
 import path from "path"
 
-const SLACK_CHANNEL = process.env.SLACK_CHANNEL || ""
+const CHANNEL_ID = process.env.CHANNEL_ID || ""
+const CHAT_ID = process.env.CHAT_ID || ""
 ;(async () => {
-	const { ts } = await slackClient.chat.postMessage({
-		channel: SLACK_CHANNEL,
+	const { postedMessage } = await TelegramBot.sendMessage({
+		chatId: CHANNEL_ID,
 		text: `*Я.Лендинг*\n:smiling_face_with_tear: Упс, тест упал, но я уже создал <${process.env.PULL_REQUEST_URL}|пулл реквест>`,
 	})
 	const diffDir = fs.readdirSync(
@@ -20,18 +21,20 @@ const SLACK_CHANNEL = process.env.SLACK_CHANNEL || ""
 		const screenName = fs.readdirSync(
 			path.join(__dirname, `../app_snapshots/diff/${dir}`)
 		)[0]
-
-		await slackClient.files.upload({
-			channels: SLACK_CHANNEL,
-			thread_ts: ts,
-			filename: dir + path.extname(screenName),
-			file: fs.createReadStream(
+        
+		// Место кривых набросков
+		await TelegramBot.sendPhoto(
+			channels: CHAT_ID,
+			{ replyToMessage: postedMessage.message_id,
+				fileName: fs.createReadStream(
 				path.join(
 					__dirname,
 					`../app_snapshots/diff/${dir}/${screenName}`
 				)
-			),
+			}
+				),
 			initial_comment: `${url}`,
 		})
+		await 
 	}
 })()
