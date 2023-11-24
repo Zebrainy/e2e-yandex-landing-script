@@ -5,13 +5,15 @@ import path from "path"
 const CHANNEL_ID = process.env.CHANNEL_ID || ""
 const CHAT_ID = process.env.CHAT_ID || ""
 ;(async () => {
-	const { postedMessage } = await TelegramBot.sendMessage({
-		chatId: CHANNEL_ID,
-		text: `*Я.Лендинг*\n:smiling_face_with_tear: Упс, тест упал, но я уже создал <${process.env.PULL_REQUEST_URL}|пулл реквест>`,
-	})
-	const diffDir = fs.readdirSync(
-		path.join(__dirname, "../app_snapshots/diff")
+	const response = await TelegramBot.telegram.sendMessage(
+		CHANNEL_ID,
+		`*Я.Лендинг*\n:smiling_face_with_tear: Упс, тест упал, но я уже создал <${process.env.PULL_REQUEST_URL}|пулл реквест>`
 	)
+	await new Promise((res) => setTimeout(res, 5000))
+
+	const disscusChatInfo = await TelegramBot.telegram.getChat(CHAT_ID)
+
+	const diffDir = fs.readdirSync(path.join(__dirname, "../app_snapshots/diff"))
 	const configMap = JSON.parse(
 		fs.readFileSync(path.join(__dirname, "../test_config.map.json"), "utf8")
 	) as Record<string, string>
@@ -21,20 +23,19 @@ const CHAT_ID = process.env.CHAT_ID || ""
 		const screenName = fs.readdirSync(
 			path.join(__dirname, `../app_snapshots/diff/${dir}`)
 		)[0]
-        
-		// Место кривых набросков
-		await TelegramBot.sendPhoto(
-			channels: CHAT_ID,
-			{ replyToMessage: postedMessage.message_id,
-				fileName: fs.createReadStream(
-				path.join(
-					__dirname,
-					`../app_snapshots/diff/${dir}/${screenName}`
-				)
+
+		const file = fs.createReadStream(
+			path.join(__dirname, `../app_snapshots/diff/${dir}/${screenName}`)
+		)
+		await TelegramBot.telegram.sendPhoto(
+			CHAT_ID,
+			{
+				source: file,
+			},
+			{
+				caption: url,
+				reply_to_message_id: disscusChatInfo.pinned_message?.message_id || 0,
 			}
-				),
-			initial_comment: `${url}`,
-		})
-		await 
+		)
 	}
 })()

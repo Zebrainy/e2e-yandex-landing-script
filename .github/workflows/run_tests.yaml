@@ -141,8 +141,9 @@ jobs:
                   pushd ./testing/
 
                   export PULL_REQUEST_URL="${{ steps.pull-request.outputs.pull-request-url }}"
-                  export SLACK_TOKEN=${{ secrets.SLACK_TOKEN }}
-                  export SLACK_CHANNEL=${{ inputs.SLACK_CHANNEL }}
+                  export TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}
+                  export CHANNEL_ID=${{ inputs.CHANNEL_ID }}
+                  export CHAT_ID=${{ inputs.CHAT_ID }}
                   export GITHUB_ACTION_URL="https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}"
 
                   # если количество файлов в папке diff больше 0

@@ -1,3 +1,3 @@
 import { Telegraf } from "telegraf"
 
-export const TelegramBot = new TelegramBot(process.env.TELEGRAM_TOKEN || "")
+export const TelegramBot = new Telegraf(process.env.TELEGRAM_TOKEN || "")

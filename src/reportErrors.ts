@@ -1,9 +1,11 @@
-import { slackClient } from "./slack"
+import { TelegramBot } from "./telegram"
 
-const SLACK_CHANNEL = process.env.SLACK_CHANNEL || ""
+const CHANNEL_ID = process.env.CHANNEL_ID || ""
+const CHAT_ID = process.env.CHAT_ID || ""
+
 ;(async () => {
-	const { ts } = await slackClient.chat.postMessage({
-		channel: SLACK_CHANNEL,
-		text: `*Я.Лендинг*\n:smiling_face_with_tear: Упс, тест упал по неизвестной причине.\n<${process.env.GITHUB_ACTION_URL}|Подробнее>`,
-	})
+	const response = await TelegramBot.telegram.sendMessage(
+		CHANNEL_ID,
+		`*Я.Лендинг*\n:smiling_face_with_tear: Упс, тест упал по неизвестной причине.\n<${process.env.GITHUB_ACTION_URL}|Подробнее>`
+	)
 })()
