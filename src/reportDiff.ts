@@ -1,16 +1,19 @@
-import { slackClient } from "./slack"
+import { TelegramBot } from "./telegram"
 import fs from "fs"
 import path from "path"
 
-const SLACK_CHANNEL = process.env.SLACK_CHANNEL || ""
+const CHANNEL_ID = process.env.CHANNEL_ID || ""
+const CHAT_ID = process.env.CHAT_ID || ""
 ;(async () => {
-	const { ts } = await slackClient.chat.postMessage({
-		channel: SLACK_CHANNEL,
-		text: `*Я.Лендинг*\n:smiling_face_with_tear: Упс, тест упал, но я уже создал <${process.env.PULL_REQUEST_URL}|пулл реквест>`,
-	})
-	const diffDir = fs.readdirSync(
-		path.join(__dirname, "../app_snapshots/diff")
+	const response = await TelegramBot.telegram.sendMessage(
+		CHANNEL_ID,
+		`*Я.Лендинг*\n:smiling_face_with_tear: Упс, тест упал, но я уже создал <${process.env.PULL_REQUEST_URL}|пулл реквест>`
 	)
+	await new Promise((res) => setTimeout(res, 5000))
+
+	const disscusChatInfo = await TelegramBot.telegram.getChat(CHAT_ID)
+
+	const diffDir = fs.readdirSync(path.join(__dirname, "../app_snapshots/diff"))
 	const configMap = JSON.parse(
 		fs.readFileSync(path.join(__dirname, "../test_config.map.json"), "utf8")
 	) as Record<string, string>
@@ -21,17 +24,18 @@ const SLACK_CHANNEL = process.env.SLACK_CHANNEL || ""
 			path.join(__dirname, `../app_snapshots/diff/${dir}`)
 		)[0]
 
-		await slackClient.files.upload({
-			channels: SLACK_CHANNEL,
-			thread_ts: ts,
-			filename: dir + path.extname(screenName),
-			file: fs.createReadStream(
-				path.join(
-					__dirname,
-					`../app_snapshots/diff/${dir}/${screenName}`
-				)
-			),
-			initial_comment: `${url}`,
-		})
+		const file = fs.createReadStream(
+			path.join(__dirname, `../app_snapshots/diff/${dir}/${screenName}`)
+		)
+		await TelegramBot.telegram.sendPhoto(
+			CHAT_ID,
+			{
+				source: file,
+			},
+			{
+				caption: url,
+				reply_to_message_id: disscusChatInfo.pinned_message?.message_id || 0,
+			}
+		)
 	}
 })()
