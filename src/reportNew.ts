@@ -18,8 +18,11 @@ const CHAT_ID = process.env.CHAT_ID || ""
 
 	const response = await TelegramBot.telegram.sendMessage(
 		CHANNEL_ID,
-`*Я.Лендинг* 🎉
-Появились новые скриншоты. [Пулл реквест](${process.env.PULL_REQUEST_URL})`
+		`*Я.Лендинг* 🎉
+Появились новые скриншоты. [Пулл реквест](${process.env.PULL_REQUEST_URL})`,
+		{
+			parse_mode: "Markdown",
+		}
 	)
 
 	await new Promise((res) => setTimeout(res, 5000))
